@@ -4,6 +4,8 @@ import './App.css';
 import $ from 'jquery';
 import url from './config/config'
 import Poster from './Poster';
+import SearchBar from './SearchBar';
+import searchUrl from './config/searchUrl';
 
 class App extends Component {
   // Constructor runs ONCE. When the object/compoent is created
@@ -15,13 +17,13 @@ class App extends Component {
     this.state = {
       moviePosters: []
     }
+    this.newUserSearch = this.newUserSearch.bind(this);
   }
   // Special lifecyle method
   // Will run as soon as the FIRST render runs
   // This is where AJAX goes
   componentDidMount() {
     // console.log("The component has mounted!");
-
     $.getJSON(url, (movieData) => {
       console.log(movieData);
       this.setState({
@@ -29,6 +31,16 @@ class App extends Component {
       });
     });
   }
+
+  newUserSearch(movieTitle) {
+    const url = `${searchUrl}${movieTitle}`;
+    $.getJSON(url, (movieData) => {
+      this.setState({
+        moviePosters: movieData.results
+      });
+    });
+
+}
 
   // EVERY React component MUST have a render
   render() {
@@ -43,7 +55,8 @@ class App extends Component {
     // return a single dom element (jsx)
     return (
       <div className="App">
-        <h1>Sanity Check</h1>
+        <h1>Movies Now Playing:</h1>
+        <SearchBar searchFunction={this.newUserSearch} />
         {posters}
       </div>
     );
